@@ -1,4 +1,5 @@
 #pragma once
+#include "pid_tree.h"
 
 namespace proxy
 {
@@ -166,6 +167,8 @@ namespace proxy
         // find("") matched every process, letting an appNames entry of "" act as a default /
         // fallback proxy for all remaining traffic. Non-empty names keep the anchored matching
         // above (so a short pattern still can't match an unrelated process).
+         if (const auto root_pid = pid_tree::parse_pid_pattern(app))
+            return pid_tree::process_tree_cache::instance().is_in_tree(process.id, *root_pid);
         if (app.empty())
             return true;
 
